@@ -1,0 +1,39 @@
+#!/bin/sh
+# setup - UExtract 4.2 Installer.
+#
+# Copyright (c) 2020 nggit.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+
+prog=uextract
+IFS=:
+
+for p in $PATH; do
+    i=$(( i + 1 ))
+    str_cmd="$str_cmd $i) install $prog \$( echo \$PATH | cut -d' ' -f$i );;"
+    str_choices="$str_choices $i )	$p
+"
+    if [ -f "$p/$prog" ]; then
+        echo "$prog sudah terpasang di $p. Hapus? ( 1 = Ya, Enter = Tidak )"
+        read -r n
+        [ "${n:-0}" = 1 ] && rm "$p/$prog"
+        exit
+    fi
+done
+
+echo "  _    _  ______        _                      _     _  _     ___  
+ | |  | ||  ____|      | |                    | |   | || |   |__ \ 
+ | |  | || |__   __  __| |_  _ __  __ _   ___ | |_  | || |_     ) |
+ | |  | ||  __|  \ \/ /| __|| '__|/ _\` | / __|| __| |__   _|   / / 
+ | |__| || |____  >  < | |_ | |  | (_| || (__ | |_     | | _  / /_ 
+  \____/ |______|/_/\_\ \__||_|   \__,_| \___| \__|    |_|(_)|____|
+                                                                   "
+
+printf '%s\n%s' "Mau dipasang dimana? ( Silahkan pilih 1 - $i )" "$str_choices"
+read -r n
+str_cmd="case \$n in$str_cmd *) echo 'Silahkan pilih 1 - $i';; esac"
+eval "$str_cmd"
